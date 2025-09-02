@@ -6,20 +6,14 @@ require("dotenv").config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors());  // Open to all
 app.use(express.json());
 
 // Routes
-const authRoutes = require("./routes/auth");
-app.use("/api/auth", authRoutes);
-const taskRoutes = require("./routes/task");
-app.use("/api/tasks", taskRoutes);
-const adminRoutes = require("./routes/admin");
-app.use("/api/admin", adminRoutes);
-const paymentRoutes = require("./routes/payment");
-app.use("/api/payment", paymentRoutes);
-
-
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/tasks", require("./routes/task"));
+app.use("/api/admin", require("./routes/admin"));
+app.use("/api/payment", require("./routes/payment"));
 
 // MongoDB connect
 mongoose

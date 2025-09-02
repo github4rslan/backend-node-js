@@ -2,14 +2,15 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 
-// ✅ Always use uppercase PORT (Render sets this automatically)
-const PORT = process.env.PORT || 8080;
+// Use the dynamic port from hosting provider OR default 8080 locally
+const port = process.env.PORT || 8080;
 
+// Test route
 app.get('/ping', (req, res) => {
-    res.send('PONG');
+  res.send('PONG');
 });
 
-// ✅ Use backticks for template literal
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// Start server
+app.listen(port, () => {
+  console.log(`🚀 Server is running on port ${port}`);
 });
