@@ -6,14 +6,18 @@ require("dotenv").config();
 const app = express();
 
 // Middleware
-app.use(cors());  // Open to all
-app.use(express.json());
+app.use(cors());
+app.use(express.json()); // <-- This line is crucial to parse JSON bodies!
 
 // Routes
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/tasks", require("./routes/task"));
-app.use("/api/admin", require("./routes/admin"));
-app.use("/api/payment", require("./routes/payment"));
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
+const taskRoutes = require("./routes/task");
+app.use("/api/tasks", taskRoutes);
+const adminRoutes = require("./routes/admin");
+app.use("/api/admin", adminRoutes);
+const paymentRoutes = require("./routes/payment");
+app.use("/api/payment", paymentRoutes);
 
 // MongoDB connect
 mongoose
