@@ -1,5 +1,5 @@
 const express = require("express");
-const Task = require("../models/task");
+const Task = require("../models/Task");
 const jwt = require("jsonwebtoken");
 
 const router = express.Router();
