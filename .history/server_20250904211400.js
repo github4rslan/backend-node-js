@@ -10,8 +10,8 @@ app.use(cors());
 app.use(express.json()); // <-- This line is crucial to parse JSON bodies!
 
 // Routes
-const authRoutes = require("./routes/auth");  // Auth routes for login/signup and Google Sign-In
-app.use("/api/auth", authRoutes);  // This will map the /api/auth route
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
 const taskRoutes = require("./routes/task");
 app.use("/api/tasks", taskRoutes);
 const adminRoutes = require("./routes/admin");
