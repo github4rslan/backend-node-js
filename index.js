@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Import your routes
 app.use('/api/admin', require('./routes/admin'));
-// ...add other routes as needed
+// ...add other routes as needed okay
 
 const port = process.env.PORT || 8080;
 
