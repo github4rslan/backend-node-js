@@ -5,9 +5,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 // 🔽 add these two lines
-const admin = require("../server/firebaseAdmin.js");
-const { sendWelcomeEmail } = require("../server/mailer.js");
- // sends the email
+const admin = require("../firebaseAdmin");          // verifies Firebase ID tokens
+const { sendWelcomeEmail } = require("../mailer");  // sends the email
 
 const router = express.Router();
 
