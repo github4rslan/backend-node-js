@@ -49,14 +49,6 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
-    // ✅ Send welcome email after successful login
-    try {
-      await sendWelcomeEmail({ to: email, name: user.name });
-      console.log("✅ Welcome email sent to:", email);
-    } catch (mailErr) {
-      console.error("❌ Failed to send welcome email:", mailErr.message);
-    }
-
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -77,6 +69,32 @@ router.post("/login", async (req, res) => {
   }
 });
 
+/* =========================
+   EMAIL-ONLY LOGIN
+========================= */
+router.post("/email-login", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "Missing email" });
+    }
+
+    // Send welcome email
+    await sendWelcomeEmail({ to: email });
+
+    // Return dummy token & user for frontend navigation
+    res.json({
+      success: true,
+      message: "Email sent successfully",
+      token: "email-only-login",
+      user: { email },
+    });
+  } catch (err) {
+    console.error("❌ email-login error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 /* =========================
    GOOGLE SIGN-IN (no changes)

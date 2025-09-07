@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
 });
 
 /* =========================
-   LOGIN (password-based)
+   LOGIN
 ========================= */
 router.post("/login", async (req, res) => {
   try {
@@ -48,14 +48,6 @@ router.post("/login", async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
-
-    // ✅ Send welcome email after successful login
-    try {
-      await sendWelcomeEmail({ to: email, name: user.name });
-      console.log("✅ Welcome email sent to:", email);
-    } catch (mailErr) {
-      console.error("❌ Failed to send welcome email:", mailErr.message);
-    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
@@ -77,10 +69,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
-/* =========================
-   GOOGLE SIGN-IN (no changes)
-========================= */
+/* ===========================================
+   SIMPLE GOOGLE SIGN-IN → JUST SEND EMAIL
+=========================================== */
 router.post("/google-signin", async (req, res) => {
   try {
     const { email, name } = req.body; // frontend must send these

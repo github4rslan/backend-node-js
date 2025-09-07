@@ -3,8 +3,6 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-
-// Nodemailer helper
 const { sendWelcomeEmail } = require("../server/mailer.js");
 
 const router = express.Router();
@@ -25,7 +23,6 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // default role = "user"
     const newUser = new User({ name, email, password: hashedPassword, role: "user" });
     await newUser.save();
 
@@ -37,7 +34,7 @@ router.post("/register", async (req, res) => {
 });
 
 /* =========================
-   LOGIN (password-based)
+   LOGIN → send welcome email
 ========================= */
 router.post("/login", async (req, res) => {
   try {
@@ -49,17 +46,17 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
-    // ✅ Send welcome email after successful login
-    try {
-      await sendWelcomeEmail({ to: email, name: user.name });
-      console.log("✅ Welcome email sent to:", email);
-    } catch (mailErr) {
-      console.error("❌ Failed to send welcome email:", mailErr.message);
-    }
-
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+
+    // ✅ Send welcome email every time someone logs in
+    try {
+      await sendWelcomeEmail({ to: user.email, name: user.name });
+      console.log("✅ Welcome email sent to:", user.email);
+    } catch (mailErr) {
+      console.error("❌ Welcome email failed:", mailErr.message);
+    }
 
     res.json({
       message: "Login successful",
@@ -77,17 +74,14 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
-/* =========================
-   GOOGLE SIGN-IN (no changes)
-========================= */
+/* ===========================================
+   SIMPLE GOOGLE SIGN-IN → send welcome email
+=========================================== */
 router.post("/google-signin", async (req, res) => {
   try {
-    const { email, name } = req.body; // frontend must send these
-
+    const { email, name } = req.body;
     if (!email) return res.status(400).json({ error: "Missing email" });
 
-    // Always send welcome email
     try {
       await sendWelcomeEmail({ to: email, name });
       console.log("✅ Welcome email sent to:", email);
