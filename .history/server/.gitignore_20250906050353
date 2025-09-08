@@ -1,5 +1,0 @@
-# Firebase key
-server/serviceAccountKey.json
-
-# Environment variables
-.env
