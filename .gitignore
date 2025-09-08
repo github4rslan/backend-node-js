@@ -3,3 +3,4 @@ server/serviceAccountKey.json
 
 # Environment variables
 .env
+.history/
