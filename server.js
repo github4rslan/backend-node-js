@@ -22,6 +22,8 @@ const tiktokRoutes = require("./routes/tiktok");
 app.use("/api/tiktok", tiktokRoutes);
 const covidRoutes = require("./routes/covid");
 app.use("/api/covid", covidRoutes);
+const whatsappRoutes = require("./routes/whatsapp");
+app.use("/api/whatsapp", whatsappRoutes);
 
 // MongoDB connect
 mongoose
