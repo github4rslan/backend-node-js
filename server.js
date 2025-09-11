@@ -20,6 +20,8 @@ const paymentRoutes = require("./routes/payment");
 app.use("/api/payment", paymentRoutes);
 const tiktokRoutes = require("./routes/tiktok");
 app.use("/api/tiktok", tiktokRoutes);
+const covidRoutes = require("./routes/covid");
+app.use("/api/covid", covidRoutes);
 
 // MongoDB connect
 mongoose
