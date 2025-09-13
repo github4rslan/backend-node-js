@@ -26,6 +26,9 @@ const whatsappRoutes = require("./routes/whatsapp");
 app.use("/api/whatsapp", whatsappRoutes);
 const twitterRoutes = require("./routes/twitter");
 app.use("/api/twitter", twitterRoutes);
+const userRoutes = require("./routes/user");
+app.use("/api/users", userRoutes);
+
 
 // MongoDB connect
 mongoose

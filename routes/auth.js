@@ -10,26 +10,57 @@ const { sendWelcomeEmail } = require("../server/mailer.js");
 const router = express.Router();
 
 /* =========================
-   REGISTER
+   REGISTER (with auto login)
 ========================= */
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password)
+    if (!name || !email || !password) {
       return res.status(400).json({ error: "All fields are required" });
+    }
 
     const existingUser = await User.findOne({ email });
-    if (existingUser)
+    if (existingUser) {
       return res.status(400).json({ error: "Email already registered" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // default role = "user"
-    const newUser = new User({ name, email, password: hashedPassword, role: "user" });
+    // Default role = "user"
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: "user",
+    });
+
     await newUser.save();
 
-    res.json({ message: "User registered successfully" });
+    // ✅ Create JWT for auto login
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    // ✅ Send welcome email on registration
+    try {
+      await sendWelcomeEmail({ to: email, name });
+      console.log("✅ Welcome email sent to:", email);
+    } catch (mailErr) {
+      console.error("❌ Failed to send welcome email:", mailErr.message);
+    }
+
+    // ✅ Respond with token + user
+    res.json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
   } catch (err) {
     console.error("❌ Register Error:", err);
     res.status(500).json({ error: err.message || "Server error" });
@@ -77,9 +108,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
 /* =========================
-   GOOGLE SIGN-IN (no changes)
+   GOOGLE SIGN-IN
 ========================= */
 router.post("/google-signin", async (req, res) => {
   try {
