@@ -19,22 +19,31 @@ router.post("/download", async (req, res) => {
 
     const response = await axios.request(options);
 
-    // Pick the correct link
+    // Pick the correct link for HD video or fallback options
     const videoUrl =
       response.data?.data?.hdplay ||  // HD without watermark
-      response.data?.data?.play ||   // fallback no-watermark
-      response.data?.data?.wmplay;   // fallback with watermark
+      response.data?.data?.play ||   // Fallback no-watermark
+      response.data?.data?.wmplay;   // Fallback with watermark
+
+    // Get the video title from the response (if available)
+    const title = response.data?.data?.title || null; // If title exists, return it, otherwise null
 
     if (!videoUrl) {
       return res.status(404).json({ error: "No downloadable video found" });
     }
 
-    res.json({ videoUrl }); // ✅ clean response
+    // Send both video URL and title (only if title exists)
+    const responseData = { videoUrl };
+    if (title) {
+      responseData.title = title; // Add title only if it's available
+    }
+
+    res.json(responseData); // Return the response with video URL and possibly title
+
   } catch (err) {
     console.error("TikTok API error:", err.response?.data || err.message);
     res.status(500).json({ error: "Failed to fetch TikTok video" });
   }
 });
-
 
 module.exports = router;
