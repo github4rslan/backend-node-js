@@ -40,7 +40,8 @@ app.use("/api/users", userRoutes);
 // **Chatbot Route** - Import the chatbot route
 const chatRoutes = require("./routes/chatrouter");  // Chatbot route
 app.use("/api/chat", chatRoutes);  // Register the chatbot route
-
+const web3Routes = require("./routes/web3");
+app.use("/api/web3", web3Routes);
 // MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI)  // Using environment variable for MongoDB URI
